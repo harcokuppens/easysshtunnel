@@ -31,7 +31,48 @@ Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbrid
     curl -Lo ${INSTALL_DIR}/sshbridge  "$DOWNLOAD_URL/sshbridge"
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
 
-## Documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)
+## Examples using  [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)
+
+**Tunneling** VNC traffic to an VNC server behind a firewall with
+the help of ssh server open to the outside world 'eg. lilo.science.ru.nl'
+where the VNCSERVER itself also runs a SSH server so we can
+send all VNC message safely over an end-to-end encrypted tunnel.
+Note that the VNC protocol does not encrypt its traffic so we must supply
+an end-to-end encrypted tunnel for it to prevent eavesdropping.
+
+    # make an encrypted ssh tunnel to VNCSERVER to prevent eavesdropping
+    sshtunnel 5900 VNCSERVER
+    # executes: ssh -N -L 5900:localhost:5900 VNCSERVER
+
+    # also bridge the tunnel over a firewall using lilo.science.ru.nl
+    sshtunnel 5900  lilo.science.ru.nl VNCSERVER
+    # executes: ssh -N -J lilo.science.ru.nl -L 5900:localhost:5900 VNCSERVER
+
+    # use locally another port if the local machine itself is running a VNC server
+    sshtunnel 15900  lilo.science.ru.nl VNCSERVER 5900
+    # executes: ssh -N -J lilo.science.ru.nl -L 15900:localhost:5900 VNCSERVER
+
+**Bridging** RDP traffic to an RDP server behind a firewall with
+the help of a SSH bridge server open to the outside world 'eg. lilo.science.ru.nl'
+Note that the RDP protocol supports encryption by itself, so only
+passing the firewall using an SSH bridge server is needed.
+
+    # bridge local port 3389 via lilo.science.ru.nl bridge to RDPSERVER (on same port)
+    sshbridge 3389 lilo.science.ru.nl RDPSERVER
+    # executes: ssh -N -L 3389:RDPSERVER:3389 lilo.science.ru.nl
+    # bridge local port 13389 via lilo.science.ru.nl bridge to port 3389 on the RDPSERVER
+    sshbridge 13389 lilo.science.ru.nl RDPSERVER 3389
+    # executes: ssh -N -L 13389:RDPSERVER:3389 lilo.science.ru.nl
+
+Note, if you want guaranteed end-to-end encryption then you can just change
+the command  'sshbridge' to 'sshtunnel', but you must enable a SSH
+server on the endpoint server 'RDPSERVER', otherwise the SSH tunnel
+cannot be made all the way:
+
+    sshtunnel 13389 lilo.science.ru.nl RDPSERVER 3389
+    # RDPSERVER runs also an SSH server
+
+## Help documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)  
 
 ### sshtunnel
 
@@ -136,4 +177,4 @@ Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbrid
       cannot be made all the way:
 
         sshtunnel 13389 lilo.science.ru.nl RDPSERVER 3389
-            # RDPSERVER runs also an SSH server
+        # RDPSERVER runs also an SSH server
