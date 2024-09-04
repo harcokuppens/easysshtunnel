@@ -20,16 +20,9 @@ and intuitive to create a new SSH tunnel or bridge within a few seconds:
    localhost to a local port on a SSH server
 2. [sshbridge](#sshbridge) - use SSH to bridge TCP traffic over a firewall.
 
-## Installation
-
-Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge) into
-`/usr/local/bin/`:
-
-    INSTALL_DIR=/usr/local/bin  # make sure INSTALL_DIR is in your PATH environment variable
-    DOWNLOAD_URL="https://raw.githubusercontent.com/harcokuppens/easysshtunnel/main/bin/"
-    curl -Lo ${INSTALL_DIR}/sshtunnel  "$DOWNLOAD_URL/sshtunnel"
-    curl -Lo ${INSTALL_DIR}/sshbridge  "$DOWNLOAD_URL/sshbridge"
-    chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
+These commands are more intuitive because their arguments specify the linear order 
+in which the data is flowing. So by just thinking how you want the traffic to go,
+you can just immediately write out the command.
 
 ## Examples using  [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)
 
@@ -71,6 +64,19 @@ cannot be made all the way:
 
     sshtunnel 13389 lilo.science.ru.nl RDPSERVER 3389
     # RDPSERVER runs also an SSH server
+
+
+## Installation
+
+Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge) into
+`/usr/local/bin/`:
+
+    INSTALL_DIR=/usr/local/bin  # make sure INSTALL_DIR is in your PATH environment variable
+    DOWNLOAD_URL="https://raw.githubusercontent.com/harcokuppens/easysshtunnel/main/bin/"
+    curl -Lo ${INSTALL_DIR}/sshtunnel  "$DOWNLOAD_URL/sshtunnel"
+    curl -Lo ${INSTALL_DIR}/sshbridge  "$DOWNLOAD_URL/sshbridge"
+    chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
+
 
 ## Help documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)  
 
