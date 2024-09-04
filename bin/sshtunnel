@@ -1,0 +1,120 @@
+#!/bin/bash
+
+# example: connect to domserver on cup on port 12345 from home via lilo8 jumphost
+#   sshtunnel 12345 lilo8.science.ru.nl cup.cs.ru.nl 12345
+#   sshtunnel 80 lilo.science.ru.nl cup.cs.ru.nl 12345
+#   sshtunnel 12345  lilo7.science.ru.nl lilo8.science.ru.nl cup.cs.ru.nl 12345
+
+readonly USAGE="USAGE 
+  sshtunnel LOCALPORT  [SSHHOST_1 ... SSHHOST_N-1] SSHHOST_N [REMOTEPORT]       
+
+WHERE
+  Each SSHHOST_X can be specified as: [USER_X@]SSHSERVER_X[:SSHPORT_X]
+  If REMOTEPORT is not given, then REMOTEPORT=LOCALPORT.
+
+  For more information run: sshtunnel -h"
+
+readonly HELP="
+NAME
+  sshtunnel - create an end-to-end encrypted SSH tunnel from a local port on localhost to a local port on a SSH server
+ 
+$USAGE
+ 
+DESCRIPTION
+  Sshtunnel creates an end-to-end encrypted SSH tunnel from localhost to a remote SSH server.
+  The SSH tunnel forwards traffic coming into the local port LOCALPORT on localhost, safely encrypted, 
+  to a port REMOTEPORT on the localhost interface on the remote SSH server SSHHOST_N.
+  We can have an additional SSH host(s) to also bridge traffic over firewall(s).
+  
+  The encrypted SSH-tunnel is created to SSHHOST_1, which extends the SSHtunnel to SSHHOST_2, ... to SSHHOST_N.
+  From the last SSHHOST_N all traffic is forwarded locally to localhost:REMOTEPORT.
+  That is on the last SSHHOST_N all traffic is sent to port REMOTEPORT on the internal localhost interface. 
+  An end-to-end encrypted SSH-tunnel is made to the remote service running on internal port REMOTEPORT on SSHHOST_N.
+  
+  It executes the following ssh command:
+  
+       ssh -N  [-J  SSHHOST_1,SSHHOST_2,...,SSHHOST_N-1]  -L LOCALPORT:localhost:REMOTEPORT SSHHOST_N         
+  
+  So the destination machine SSHHOST_N must run a SSH server so that you can make an end-to-end encrypted tunnel.
+  For the service running on the internal port REMOTEPORT on SSHHOST_N the connection is coming from the localhost interface,
+  which allows us to connect to services which are not open to the outside world!
+  
+EXAMPLE 
+  Tunneling VNC traffic to an VNC server behind a firewall with
+  the help of ssh server open to the outside world 'eg. lilo.science.ru.nl' 
+  where the VNCSERVER itself also runs a SSH server so we can
+  send all VNC message safely over an end-to-end encrypted tunnel.
+  Note that the VNC protocol does not encrypt its traffic so we must supply
+  an end-to-end encrypted tunnel for it to prevent eavesdropping.
+
+    # make an encrypted ssh tunnel to VNCSERVER to prevent eavesdropping    
+    sshtunnel 5900 VNCSERVER 
+    # executes: ssh -N -L 5900:localhost:5900 VNCSERVER 
+    
+    # also bridge the tunnel over a firewall using lilo.science.ru.nl      
+    sshtunnel 5900  lilo.science.ru.nl VNCSERVER 
+    # executes: ssh -N -J lilo.science.ru.nl -L 5900:localhost:5900 VNCSERVER 
+    
+    # use locally another port if the local machine itself is running a VNC server
+    sshtunnel 15900  lilo.science.ru.nl VNCSERVER 5900
+    # executes: ssh -N -J lilo.science.ru.nl -L 15900:localhost:5900 VNCSERVER  
+"
+
+sshtunnel() {
+    if [[ "$1" == "-h" ]]; then
+        echo "$HELP"
+        exit 0
+    fi
+
+    # check minimal number of arguments are provided (LOCALPORT  and SSHHOST_N)
+    if [[ "$#" -lt "2" ]]; then
+        echo "$USAGE"
+        exit 0
+    fi
+
+    # check LOCALPORT
+    readonly LOCALPORT="$1"
+    shift
+    if ! [[ $LOCALPORT =~ ^-?[0-9]+$ ]]; then
+        echo "ERROR: first argument must be a TCP port"
+        echo "$USAGE"
+        exit 0
+    fi
+
+    # remaining args :  [SSHHOST_1 ... SSHHOST_N-1] SSHHOST_N [REMOTEPORT]
+    # we have optionally as last argument  a REMOTEPORT
+    readonly LAST_ARG="${@: -1}"
+    if [[ $LAST_ARG =~ ^-?[0-9]+$ ]]; then
+        readonly REMOTEPORT=$LAST_ARG
+        # pop: remove last arg from $@
+        set -- "${@:1:$#-1}"
+    else
+        readonly REMOTEPORT=$LOCALPORT
+    fi
+
+    # remaining args are SSH Hosts: [SSHHOST_1 ... SSHHOST_N-1] SSHHOST_N
+    SSHHOSTS=("$@")
+    if ! [[ "${#SSHHOSTS[@]}" -ge "1" ]]; then
+        echo "$USAGE"
+        exit 0
+    fi
+
+    # get last SSHHOST out of list as final SSH server
+    LAST_SSHHOST=${SSHHOSTS[${#SSHHOSTS[@]} - 1]}
+    unset "SSHHOSTS[${#SSHHOSTS[@]}-1]"
+
+    # remaining SSHHOSTS used as JUMP SSH SERVERS
+    JUMPHOSTS_OPTION=""
+    if [[ "${#SSHHOSTS[@]}" -ge "1" ]]; then
+        JUMPHOSTS_OPTION="-J "
+        SEP=""
+        for SSHHOST in "${SSHHOSTS[@]}"; do
+            JUMPHOSTS_OPTION="$JUMPHOSTS_OPTION$SEP$SSHHOST"
+            SEP=","
+        done
+    fi
+    echo "executing: ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:localhost:$REMOTEPORT $LAST_SSHHOST"
+    ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:localhost:$REMOTEPORT $LAST_SSHHOST
+}
+
+sshtunnel "$@"
