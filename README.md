@@ -73,10 +73,13 @@ Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbrid
 
     INSTALL_DIR=/usr/local/bin  # make sure INSTALL_DIR is in your PATH environment variable
     DOWNLOAD_URL="https://raw.githubusercontent.com/harcokuppens/easysshtunnel/main/bin/"
-    curl -Lo ${INSTALL_DIR}/sshtunnel  "$DOWNLOAD_URL/sshtunnel"
-    curl -Lo ${INSTALL_DIR}/sshbridge  "$DOWNLOAD_URL/sshbridge"
+    curl -Lo ${INSTALL_DIR}/sshtunnel  "$DOWNLOAD_URL/sshtunnel
+    curl -Lo ${INSTALL_DIR}/sshbridge  "$DOWNLOAD_URL/sshbridge
+    chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
 
+On a Windows machine you can install Git for Windows which provides you with a terminal running bash on which you can ssh commands,
+and above installation instructions to install sshtunnel and sshbridge.
 
 ## Help documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)  
 
