@@ -45,7 +45,7 @@ an end-to-end encrypted tunnel for it to prevent eavesdropping.
     sshtunnel 15900  lilo.science.ru.nl VNCSERVER 5900
     # executes: ssh -N -J lilo.science.ru.nl -L 15900:localhost:5900 VNCSERVER
 
-**Bridging** RDP traffic to an RDP server behind a firewall with
+**Bridging** RDP traffic to a RDP server behind a firewall with
 the help of a SSH bridge server open to the outside world 'eg. lilo.science.ru.nl'
 Note that the RDP protocol supports encryption by itself, so only
 passing the firewall using an SSH bridge server is needed.
