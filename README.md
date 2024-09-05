@@ -78,7 +78,7 @@ Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbrid
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
 
-On a Windows machine you can install Git for Windows which provides you with a terminal running bash on which you can ssh commands,
+On a Windows machine you can install [Git for Windows](https://gitforwindows.org) which provides you with a terminal running bash on which you can run ssh commands,
 and above installation instructions to install sshtunnel and sshbridge.
 
 ## Help documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)  
