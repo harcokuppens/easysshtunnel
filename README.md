@@ -2,6 +2,21 @@
 
 Easily create a ssh tunnel or bridge.
 
+<!--ts-->
+   * [Description](#description)
+   * [Examples using sshtunnel and sshbridge](#examples-using-sshtunnel-and-sshbridge)
+   * [Installation](#installation)
+   * [Help documentation for sshtunnel and sshbridge](#help-documentation-for-sshtunnel-and-sshbridge)
+      * [sshtunnel](#sshtunnel)
+      * [sshbridge](#sshbridge)
+
+<!-- Created by https://github.com/ekalinin/github-markdown-toc -->
+<!-- Added by: harcok, at: do sep  5 08:51:13 CEST 2024 -->
+
+<!--te-->
+
+## Description
+
 The `ssh` command is a great tool to make SSH tunnels for either
 
 - **tunneling**: making an end-to-end encrypted tunnel to protect data traffic which is send through
@@ -20,18 +35,17 @@ and intuitive to create a new SSH tunnel or bridge within a few seconds:
    localhost to a local port on a SSH server
 2. [sshbridge](#sshbridge) - use SSH to bridge TCP traffic over a firewall.
 
-These commands are more intuitive because their arguments specify the linear order 
-in which the data is flowing. So by just thinking how you want the traffic to go,
-you can just immediately write out the command.
+These commands are more intuitive because their arguments specify the linear order in which the data
+is flowing. So by just thinking how you want the traffic to go, you can just immediately write out
+the command.
 
-## Examples using  [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)
+## Examples using sshtunnel and sshbridge
 
-**Tunneling** VNC traffic to an VNC server behind a firewall with
-the help of ssh server open to the outside world 'eg. lilo.science.ru.nl'
-where the VNCSERVER itself also runs a SSH server so we can
-send all VNC message safely over an end-to-end encrypted tunnel.
-Note that the VNC protocol does not encrypt its traffic so we must supply
-an end-to-end encrypted tunnel for it to prevent eavesdropping.
+**Tunneling** VNC traffic to an VNC server behind a firewall with the help of ssh server open to the
+outside world 'eg. lilo.science.ru.nl' where the VNCSERVER itself also runs a SSH server so we can
+send all VNC message safely over an end-to-end encrypted tunnel. Note that the VNC protocol does not
+encrypt its traffic so we must supply an end-to-end encrypted tunnel for it to prevent
+eavesdropping.
 
     # make an encrypted ssh tunnel to VNCSERVER to prevent eavesdropping
     sshtunnel 5900 VNCSERVER
@@ -45,10 +59,9 @@ an end-to-end encrypted tunnel for it to prevent eavesdropping.
     sshtunnel 15900  lilo.science.ru.nl VNCSERVER 5900
     # executes: ssh -N -J lilo.science.ru.nl -L 15900:localhost:5900 VNCSERVER
 
-**Bridging** RDP traffic to a RDP server behind a firewall with
-the help of a SSH bridge server open to the outside world 'eg. lilo.science.ru.nl'
-Note that the RDP protocol supports encryption by itself, so only
-passing the firewall using an SSH bridge server is needed.
+**Bridging** RDP traffic to a RDP server behind a firewall with the help of a SSH bridge server open
+to the outside world 'eg. lilo.science.ru.nl' Note that the RDP protocol supports encryption by
+itself, so only passing the firewall using an SSH bridge server is needed.
 
     # bridge local port 3389 via lilo.science.ru.nl bridge to RDPSERVER (on same port)
     sshbridge 3389 lilo.science.ru.nl RDPSERVER
@@ -57,14 +70,12 @@ passing the firewall using an SSH bridge server is needed.
     sshbridge 13389 lilo.science.ru.nl RDPSERVER 3389
     # executes: ssh -N -L 13389:RDPSERVER:3389 lilo.science.ru.nl
 
-Note, if you want guaranteed end-to-end encryption then you can just change
-the command  'sshbridge' to 'sshtunnel', but you must enable a SSH
-server on the endpoint server 'RDPSERVER', otherwise the SSH tunnel
-cannot be made all the way:
+Note, if you want guaranteed end-to-end encryption then you can just change the command 'sshbridge'
+to 'sshtunnel', but you must enable a SSH server on the endpoint server 'RDPSERVER', otherwise the
+SSH tunnel cannot be made all the way:
 
     sshtunnel 13389 lilo.science.ru.nl RDPSERVER 3389
     # RDPSERVER runs also an SSH server
-
 
 ## Installation
 
@@ -78,10 +89,11 @@ Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbrid
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshtunnel
     chmod a+x ${INSTALL_DIR}/sshtunnel ${INSTALL_DIR}/sshbridge
 
-On a Windows machine you can install [Git for Windows](https://gitforwindows.org) which provides you with a terminal running bash on which you can run ssh commands,
-and above installation instructions to install sshtunnel and sshbridge.
+On a Windows machine you can install [Git for Windows](https://gitforwindows.org) which provides you
+with a terminal running bash on which you can run ssh commands, and above installation instructions
+to install sshtunnel and sshbridge.
 
-## Help documentation for [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge)  
+## Help documentation for sshtunnel and sshbridge
 
 ### sshtunnel
 
@@ -138,7 +150,7 @@ and above installation instructions to install sshtunnel and sshbridge.
         sshtunnel 15900  lilo.science.ru.nl VNCSERVER 5900
         # executes: ssh -N -J lilo.science.ru.nl -L 15900:localhost:5900 VNCSERVER
 
-## sshbridge
+### sshbridge
 
     $ sshbridge -h
 
