@@ -77,6 +77,33 @@ SSH tunnel cannot be made all the way:
     sshtunnel 13389 lilo.science.ru.nl RDPSERVER 3389
     # RDPSERVER runs also an SSH server
 
+Note, that you can do with sshbridge the same thing as with sshtunnel by taking the sshtunnel command and
+use as REMOTESERVER=localhost. Eg.
+
+       $ sshtunnel 12345 cup.cs.ru.nl
+       executing: ssh -N  -L 12345:localhost:12345 cup.cs.ru.nl
+
+       $ sshbridge 12345 cup.cs.ru.nl localhost
+       executing: ssh -N  -L 12345:localhost:12345 cup.cs.ru.nl
+
+where the sshbridge command runs the exact same ssh command as sshtunnel does. 
+However it is more convenient to use sshtunnel then sshbridge in this was, so we keep both commands.
+
+
+** Killing bridges or tunnels ** can be easily done with the pgrep and pkill commands. For example:
+
+       $ sshtunnel 12345 cup.cs.ru.nl &
+       executing: ssh -N  -L 12345:localhost:12345 cup.cs.ru.nl
+
+       $ pgrep -fl sshtunnel
+       33859 /bin/bash /usr/local/bin/sshtunnel 12345 cup.cs.ru.nl
+
+       $ pkill -f sshtunnel       # kills the sshtunnel process
+       
+       $ pgrep -fl sshtunnel      # returns nothing because sshtunnel already killed
+       
+
+
 ## Installation
 
 Just execute the following steps to install [sshtunnel](#sshtunnel) and [sshbridge](#sshbridge) into
