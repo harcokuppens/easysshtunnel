@@ -100,7 +100,7 @@ However it is more convenient to use sshtunnel then sshbridge in this was, so we
 
     $ pkill -f sshtunnel       # kills all sshtunnel processes (only one in this case)
        
-    $ pgrep -fl sshtunnel      # returns nothing because sshtunnel already killed
+    $ pgrep -fal sshtunnel      # returns nothing because sshtunnel already killed
 
     $ sshtunnel 12345 cup.cs.ru.nl & 
     $ sshtunnel 12345 lilo.science.ru.nl &
@@ -118,6 +118,7 @@ However it is more convenient to use sshtunnel then sshbridge in this was, so we
     43481 /bin/bash /usr/local/bin/sshtunnel 12345 cup.cs.ru.nl
 
 
+Note that we use both option `-a` and `-l` where the first is for long output on Linux and the second for Macos.
 
 ## Installation
 
