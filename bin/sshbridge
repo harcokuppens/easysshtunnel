@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # example: bridge firewall from home to RPD server on cup via lilo as bridge
 #   sshbridge 13389 lilo.science.ru.nl cup.cs.ru.nl 3389
 #   sshbridge 3389 lilo.science.ru.nl cup.cs.ru.nl
@@ -115,7 +113,20 @@ sshbridge() {
     fi
     # ssh -N  [-J SSHHOST_1,SSHHOST_2,...SSHHOST_N-1]  -L LOCALPORT:REMOTESERVER:REMOTEPORT SSHHOST_N
     echo "executing: ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:$REMOTESERVER:$REMOTEPORT $SSHHOST_N"
-    ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:$REMOTESERVER:$REMOTEPORT $SSHHOST_N
+    ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:$REMOTESERVER:$REMOTEPORT $SSHHOST_N &
+    child_pid=$!
+    wait $child_pid
 }
+
+# Function to handle termination signals and kill the child process
+cleanup() {
+    echo "Terminating sshbridge script, killing ssh child process..."
+    # Kill all child processes started by this script
+    pkill -P $$
+    exit 1
+}
+
+# Trap termination signals (SIGTERM, SIGINT) and call cleanup
+trap cleanup SIGTERM SIGINT
 
 sshbridge "$@"

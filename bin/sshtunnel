@@ -114,7 +114,20 @@ sshtunnel() {
         done
     fi
     echo "executing: ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:localhost:$REMOTEPORT $LAST_SSHHOST"
-    ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:localhost:$REMOTEPORT $LAST_SSHHOST
+    ssh -N $JUMPHOSTS_OPTION -L $LOCALPORT:localhost:$REMOTEPORT $LAST_SSHHOST &
+    child_pid=$!
+    wait $child_pid
 }
+
+# Function to handle termination signals and kill the child process
+cleanup() {
+    echo "Terminating sshtunnel script, killing ssh child process..."
+    # Kill all child processes started by this script
+    pkill -P $$
+    exit 1
+}
+
+# Trap termination signals (SIGTERM, SIGINT) and call cleanup
+trap cleanup SIGTERM SIGINT
 
 sshtunnel "$@"
