@@ -95,13 +95,28 @@ However it is more convenient to use sshtunnel then sshbridge in this was, so we
     $ sshtunnel 12345 cup.cs.ru.nl &
     executing: ssh -N  -L 12345:localhost:12345 cup.cs.ru.nl
 
-    $ pgrep -fl sshtunnel
+    $ pgrep -fal sshtunnel
     33859 /bin/bash /usr/local/bin/sshtunnel 12345 cup.cs.ru.nl
 
-    $ pkill -f sshtunnel       # kills the sshtunnel process
+    $ pkill -f sshtunnel       # kills all sshtunnel processes (only one in this case)
        
     $ pgrep -fl sshtunnel      # returns nothing because sshtunnel already killed
-       
+
+    $ sshtunnel 12345 cup.cs.ru.nl & 
+    $ sshtunnel 12345 lilo.science.ru.nl &
+    
+    $ pgrep -fal sshtunnel.*lilo
+    43421 /bin/bash /usr/local/bin/sshtunnel 2345 lilo.science.ru.nl
+    43481 /bin/bash /usr/local/bin/sshtunnel 12345 cup.cs.ru.nl
+
+    $ pgrep -fal sshtunnel.*lilo        # select only tunnel lilo
+    43421 /bin/bash /usr/local/bin/sshtunnel 2345 lilo.science.ru.nl
+
+    $ pkill -fal sshtunnel.*lilo        # kill only tunnel lilo
+    
+    $ pgrep -fal sshtunnel
+    43481 /bin/bash /usr/local/bin/sshtunnel 12345 cup.cs.ru.nl
+
 
 
 ## Installation
